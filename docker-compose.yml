@@ -1,0 +1,38 @@
+version: '3'
+services:
+
+  web:
+    build: .
+    command: gunicorn -b 0.0.0.0:8000 -w 5 parikshana.wsgi:application
+    ports:
+      - 8000
+    depends_on:
+      - nginx
+      - postgres
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:15beta2-alpine3.16
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${postgres_user}
+      POSTGRES_DB: ${postgres_db}
+      POSTGRES_PASSWORD: ${postgres_password}
+    ports:
+      - "5432:5432"
+
+  nginx:
+    container_name: nginx_compiler
+    restart: unless-stopped
+    build: ./server_config
+    ports:
+      - "80:80"
+    volumes:
+      - ./static:/static
+      - ./media:/media
+    environment:
+      SECRET_KEY: ${secret_key}
