@@ -21,7 +21,7 @@ jobs:
           username: root
           password: ${{ secrets.parikshana_backend_password}}
           script: |
-            cd secrets.parikshana-backend
+            cd parikshana-backend
             git pull
             docker-compose down
             docker-compose up -d
