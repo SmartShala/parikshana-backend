@@ -3,6 +3,7 @@ services:
 
   web:
     build: .
+    container_name: parikshana_web
     command: gunicorn -b 0.0.0.0:8000 -w 5 parikshana.wsgi:application
     ports:
       - 8000
