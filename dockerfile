@@ -14,4 +14,3 @@ RUN pip3 install gunicorn
 
 COPY . .
 
-RUN python manage.py collectstatic -y

@@ -28,3 +28,5 @@ toml==0.10.2
 tomli==2.0.1
 tzdata==2022.1
 urllib3==1.26.10
+django-storages
+boto3
