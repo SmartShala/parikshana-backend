@@ -13,3 +13,5 @@ RUN apk --purge del .build-deps
 RUN pip3 install gunicorn
 
 COPY . .
+
+RUN python manage.py collectstatic -y
