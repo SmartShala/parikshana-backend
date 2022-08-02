@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
-
+from typing import List, Tuple
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "user",
     "rest_framework",
     "rest_framework_simplejwt",
+    "django_minio_backend",
 ]
 
 MIDDLEWARE = [
@@ -163,15 +164,40 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# minio
-AWS_STORAGE_BUCKET_NAME = 'django'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3ManifestStaticStorage'   
-AWS_S3_ACCESS_KEY_ID = os.getenv("s3_access_key")
-AWS_S3_SECRET_ACCESS_KEY = os.getenv("s3_access_secret")
-AWS_S3_CUSTOM_DOMAIN = os.getenv("s3_access_point")
+# # minio
+# AWS_STORAGE_BUCKET_NAME = 'django'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3ManifestStaticStorage'   
+# AWS_S3_ACCESS_KEY_ID = os.getenv("s3_access_key")
+# AWS_S3_SECRET_ACCESS_KEY = os.getenv("s3_access_secret")
+# AWS_S3_CUSTOM_DOMAIN = os.getenv("s3_access_point")
 
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/static'
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/static'
 
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/media'
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/media'
+
+
+
+MINIO_PRIVATE_BUCKETS = [
+    'parikshana-media',
+    'parikshana-static'
+]
+MINIO_PUBLIC_BUCKETS = [
+]
+
+STATICFILES_STORAGE = 'django_minio_backend.models.MinioBackendStatic'
+DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
+
+MINIO_ENDPOINT = os.getenv("minio_internal_endpoint")
+MINIO_EXTERNAL_ENDPOINT = os.getenv("minio_external_endpoint")
+MINIO_ACCESS_KEY = os.getenv("minio_key")
+MINIO_SECRET_KEY = os.getenv("minio_secret")
+MINIO_URL_EXPIRY_HOURS = timedelta(days=1)  # Default is 7 days (longest) if not defined
+MINIO_CONSISTENCY_CHECK_ON_START = True
+MINIO_EXTERNAL_ENDPOINT_USE_HTTPS=False
+MINIO_USE_HTTPS = False
+MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
+MINIO_MEDIA_FILES_BUCKET = 'parikshana-media'  # replacement for MEDIA_ROOT
+MINIO_STATIC_FILES_BUCKET = 'parikshana-static'  # replacement for STATIC_ROOT
+MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
