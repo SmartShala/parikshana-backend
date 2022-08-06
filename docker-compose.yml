@@ -4,7 +4,7 @@ services:
   web:
     build: .
     container_name: parikshana_web
-    command: gunicorn -b 0.0.0.0:8000 -w 5 parikshana.wsgi:application
+    command: gunicorn -b 0.0.0.0:8000 -w 5 parikshana.wsgi:application --reload
     ports:
       - 8000
     depends_on:
@@ -16,7 +16,7 @@ services:
       - .env
 
   nginx:
-    container_name: nginx_compiler
+    container_name: parikshana_nginx
     restart: unless-stopped
     build: ./server_config
     ports:
@@ -36,15 +36,15 @@ services:
     ports:
       - "5432:5432"
 
-  pgadmin:
-    container_name: pgadmin4
-    image: dpage/pgadmin4:6.6
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${pgadmin_default_email}
-      PGADMIN_DEFAULT_PASSWORD: ${pgadmin_default_password}
-    ports:
-    - 80
+  # pgadmin:
+  #   container_name: pgadmin4
+  #   image: dpage/pgadmin4:6.6
+  #   restart: unless-stopped
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${pgadmin_default_email}
+  #     PGADMIN_DEFAULT_PASSWORD: ${pgadmin_default_password}
+  #   ports:
+  #   - 80
 
   redis:
     container_name: redis
@@ -68,3 +68,18 @@ services:
     volumes:
       - ./data:/data
     command: server --address ":9000" --console-address ":9001" /data
+
+
+  # celery_worker:
+  #   build:
+  #     context: .
+  #     dockerfile: ./celery/Dockerfile
+  #   image: django_celery_example_celery_worker
+  #   command: /start-celeryworker
+  #   volumes:
+  #     - .:/app
+  #   env_file:
+  #     - ./.env/.dev-sample
+  #   depends_on:
+  #     - redis
+  #     - db
