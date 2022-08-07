@@ -23,6 +23,6 @@ jobs:
           script: |
             cd parikshana-backend
             git pull
-            docker-compose down
-            docker-compose up -d
+            docker-compose up -d --build
+            docker-compose exec web python manage.py makemigrations & python manage.py migrate 
             echo "Successfully deployed"

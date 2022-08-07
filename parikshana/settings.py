@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("secret_key")
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = "user.User"
 
 # Application definition
 
@@ -47,21 +47,20 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "django_minio_backend",
-    'corsheaders',
-    'django_filters',
-    'import_export',
-
-
+    "corsheaders",
+    "django_filters",
+    "import_export",
     "grader_app",
     "test_app",
     "user",
+    "school_app",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "silk.middleware.SilkyMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -90,8 +89,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "parikshana.wsgi.application"
 
 
-
-BASE_URL= os.getenv("base_url")
+BASE_URL = os.getenv("base_url")
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -128,45 +126,41 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
     ]
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
-    'UPDATE_LAST_LOGIN': True,
-
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
 }
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -184,7 +178,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # AWS_STORAGE_BUCKET_NAME = 'django'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3ManifestStaticStorage'   
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3ManifestStaticStorage'
 # AWS_S3_ACCESS_KEY_ID = os.getenv("s3_access_key")
 # AWS_S3_SECRET_ACCESS_KEY = os.getenv("s3_access_secret")
 # AWS_S3_CUSTOM_DOMAIN = os.getenv("s3_access_point")
@@ -194,25 +188,21 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/media'
 
 
-# CELERY SETTINGS 
+# CELERY SETTINGS
 BROKER_URL = f'redis://:{os.getenv("REDIS_PASSWORD")}@{os.getenv("REDIS_HOST", "localhost")}:{os.getenv("REDIS_PORT", 6379)}'
 CELERY_RESULT_BACKEND = BROKER_URL
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
- 
-# Minio 
 
-MINIO_PRIVATE_BUCKETS = [
-    'parikshana-media',
-    'parikshana-static'
-]
-MINIO_PUBLIC_BUCKETS = [
-]
+# Minio
 
-STATICFILES_STORAGE = 'django_minio_backend.models.MinioBackendStatic'
-DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
+MINIO_PRIVATE_BUCKETS = ["parikshana-media", "parikshana-static"]
+MINIO_PUBLIC_BUCKETS = []
+
+STATICFILES_STORAGE = "django_minio_backend.models.MinioBackendStatic"
+DEFAULT_FILE_STORAGE = "django_minio_backend.models.MinioBackend"
 
 MINIO_ENDPOINT = os.getenv("minio_internal_endpoint")
 MINIO_EXTERNAL_ENDPOINT = os.getenv("minio_external_endpoint")
@@ -220,9 +210,11 @@ MINIO_ACCESS_KEY = os.getenv("minio_key")
 MINIO_SECRET_KEY = os.getenv("minio_secret")
 MINIO_URL_EXPIRY_HOURS = timedelta(days=1)  # Default is 7 days (longest) if not defined
 MINIO_CONSISTENCY_CHECK_ON_START = True
-MINIO_EXTERNAL_ENDPOINT_USE_HTTPS=False
+MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
 MINIO_USE_HTTPS = False
 MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
-MINIO_MEDIA_FILES_BUCKET = 'parikshana-media'  # replacement for MEDIA_ROOT
-MINIO_STATIC_FILES_BUCKET = 'parikshana-static'  # replacement for STATIC_ROOT
-MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
+MINIO_MEDIA_FILES_BUCKET = "parikshana-media"  # replacement for MEDIA_ROOT
+MINIO_STATIC_FILES_BUCKET = "parikshana-static"  # replacement for STATIC_ROOT
+MINIO_BUCKET_CHECK_ON_SAVE = (
+    True  # Default: True // Creates bucket if missing, then save
+)
