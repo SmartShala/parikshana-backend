@@ -3,19 +3,23 @@ from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager)
 import uuid
 from django.utils import timezone
+from django_minio_backend import MinioBackend
 # Create your models here.
 
 class Role(models.Model):
     IS_SUPERADMIN = 1
     IS_TEACHER = 2
+    IS_ADMIN = 3
 
     ROLE_CHOICES = (
         (IS_SUPERADMIN, 'superadmin'),
         (IS_TEACHER, 'teacher'),
+        (IS_ADMIN,'admin'),
     )
     ROLES_CHOICES = (
         ('SUPERADMIN', 'is_superadmin'),
         ('TEACHER', 'is_teacher'),
+        ('ADMIN', 'is_admin')
     )
 
     id = models.PositiveSmallIntegerField(
@@ -62,7 +66,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     teacher_id = models.CharField(max_length=100, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    
+    image = models.FileField(
+        verbose_name="Object Upload",
+        storage=MinioBackend(bucket_name="parikshana-media"),
+        upload_to="student_images",
+        null=True,
+        blank=True,
+    )
     date_joined = models.DateTimeField(default=timezone.now)
     objects = UserManager()
 
