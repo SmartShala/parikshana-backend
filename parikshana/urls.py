@@ -42,7 +42,7 @@ urlpatterns += [
 # Final url patterns
 urlpatterns = [
     path("api/", include(urlpatterns)),
-    path("", Home.as_view()),
+    path("", Home.as_view(), name="namaste"),
 ]
 
 # OPENAPI
