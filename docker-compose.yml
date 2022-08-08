@@ -16,6 +16,7 @@ services:
       - .env
 
   nginx:
+    image: jonasal/nginx-certbot:latest
     container_name: parikshana_nginx
     restart: unless-stopped
     build: ./server_config
@@ -24,14 +25,10 @@ services:
       - 443:433
     environment:
       SECRET_KEY: ${secret_key}
+      CERTBOT_EMAIL: royimonroy@gmail.com
     volumes:
-      - ./certbot/www:/var/www/certbot/:ro
+      - ./server_config:/etc/letsencrypt:ro
 
-
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
 
   postgres:
     image: postgres:14.4-alpine3.16
