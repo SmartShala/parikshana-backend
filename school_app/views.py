@@ -23,6 +23,8 @@ from parikshana.custom_errors import (
 
 
 class CreateSchool(generics.ListCreateAPIView, ExceptionMixin):
+    """Hello world"""
+
     permission_classes = [IsAdminUser]
     serializer_class = SchoolSerializer
 

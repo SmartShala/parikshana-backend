@@ -21,9 +21,17 @@ services:
     build: ./server_config
     ports:
       - "80:80"
+      - 443:433
     environment:
       SECRET_KEY: ${secret_key}
+    volumes:
+      - ./certbot/www:/var/www/certbot/:ro
 
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
 
   postgres:
     image: postgres:14.4-alpine3.16
