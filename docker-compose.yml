@@ -16,18 +16,13 @@ services:
       - .env
 
   nginx:
-    image: jonasal/nginx-certbot:latest
     container_name: parikshana_nginx
     restart: unless-stopped
+    build: ./server_config
     ports:
       - "80:80"
-      - 443:433
     environment:
       SECRET_KEY: ${secret_key}
-      CERTBOT_EMAIL: royimonroy@gmail.com
-    volumes:
-      - nginx_secrets:/etc/letsencrypt
-      - ./server_config/nginx.conf:/etc/nginx/conf.d/default.conf
 
 
   postgres:
@@ -88,6 +83,3 @@ services:
   #   depends_on:
   #     - redis
   #     - db
-
-volumes:
-  nginx_secrets:
