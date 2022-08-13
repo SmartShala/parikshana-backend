@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer
 
 
-class UserCreateView(generics.CreateAPIView,generics.UpdateAPIView):
+class UserCreateView(generics.CreateAPIView, generics.UpdateAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserSerializer
     paginaton_class = None
@@ -16,7 +16,7 @@ class UserCreateView(generics.CreateAPIView,generics.UpdateAPIView):
         serializer = UserSerializer(user)
         return Response(serializer.data, status=200)
 
-class UpdatePasswordView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = UserUpdateSerializer
-    
+
+# class UpdatePasswordView(APIView):
+#     permission_classes = (permissions.IsAuthenticated,)
+# serializer_class = UserUpdateSerializer
