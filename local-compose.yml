@@ -1,0 +1,88 @@
+version: '3'
+services:
+
+  web:
+    build: .
+    container_name: parikshana_web
+    command: gunicorn -b 0.0.0.0:8000 -w 5 parikshana.wsgi:application --reload
+    ports:
+      - 8000
+    depends_on:
+      - nginx
+      - postgres
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+
+  nginx:
+    container_name: parikshana_nginx
+    restart: unless-stopped
+    build: ./server_config
+    ports:
+      - "80:80"
+    environment:
+      SECRET_KEY: ${secret_key}
+
+
+  postgres:
+    image: postgres:14.4-alpine3.16
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${postgres_user}
+      POSTGRES_DB: ${postgres_db}
+      POSTGRES_PASSWORD: ${postgres_password}
+    ports:
+      - "5432:5432"
+
+  # pgadmin:
+  #   container_name: pgadmin4
+  #   image: dpage/pgadmin4:6.6
+  #   restart: unless-stopped
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${pgadmin_default_email}
+  #     PGADMIN_DEFAULT_PASSWORD: ${pgadmin_default_password}
+  #   ports:
+  #   - 80
+
+  redis:
+    container_name: redis
+    image: redis/redis-stack-server
+    volumes:
+      - ./redis:/data
+    environment:
+    - ALLOW_EMPTY_PASSWORD=NO
+    - REDIS_PASSWORD=${redis_password}
+    - REDIS_USERNAME=${redis_username}
+    ports:
+      - "6379:6379"
+
+  storage:
+    container_name: min.io
+    image: minio/minio:RELEASE.2022-07-24T17-09-31Z
+    environment:
+      - MINIO_ROOT_USER=${minio_root_user}
+      - MINIO_ROOT_PASSWORD=${minio_root_password}
+      - MINIO_
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./data:/data
+    command: server --address ":9000" --console-address ":9001" /data
+
+
+  # celery_worker:
+  #   build:
+  #     context: .
+  #     dockerfile: ./celery/Dockerfile
+  #   image: django_celery_example_celery_worker
+  #   command: /start-celeryworker
+  #   volumes:
+  #     - .:/app
+  #   env_file:
+  #     - ./.env/.dev-sample
+  #   depends_on:
+  #     - redis
+  #     - db
