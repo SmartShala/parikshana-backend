@@ -6,6 +6,8 @@ from .views import (
     UpdateDeleteTeachers,
 )
 
+app_name = "School"
+
 urlpatterns = [
     path("", CreateSchool.as_view(), name="Create-Get-School"),  # GET POST
     path(

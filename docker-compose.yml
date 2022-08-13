@@ -46,14 +46,14 @@ services:
   #   ports:
   #   - 80
 
-  redis:
-    container_name: redis
-    image: redis:7.0.4-alpine
-    environment:
-    - ALLOW_EMPTY_PASSWORD=NO
-    - REDIS_PASSWORD=${redis_password}
-    ports:
-      - "6379:6379"
+  # redis:
+  #   container_name: redis
+  #   image: redis:7.0.4-alpine
+  #   environment:
+  #   - ALLOW_EMPTY_PASSWORD=NO
+  #   - REDIS_PASSWORD=${redis_password}
+  #   ports:
+  #     - "6379:6379"
 
   storage:
     container_name: min.io
