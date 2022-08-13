@@ -4,10 +4,20 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework.authentication import BasicAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .views import Home
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from drf_yasg.generators import OpenAPISchemaGenerator
+
+
+class CustomOpenAPISchemaGenerator(OpenAPISchemaGenerator):
+    def get_schema(self, *args, **kwargs):
+        schema = super().get_schema(*args, **kwargs)
+        schema.basePath = "/api/"  # API prefix
+        return schema
 
 
 schema_view = get_schema_view(
@@ -21,13 +31,16 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=[permissions.IsAuthenticated],
+    authentication_classes=[BasicAuthentication, JWTAuthentication],
+    generator_class=CustomOpenAPISchemaGenerator,
 )
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("user/", include("user.urls")),
-    path("school/", include("school_app.urls")),
+    path("user/", include("user.urls", namespace="User")),
+    path("ping/", Home.as_view(), name="namaste"),
+    path("school/", include("school_app.urls", namespace="School")),
 ]
 
 # Silk
@@ -42,11 +55,10 @@ urlpatterns += [
 # Final url patterns
 urlpatterns = [
     path("api/", include(urlpatterns)),
-    path("", Home.as_view(), name="namaste"),
 ]
 
-# OPENAPI
 
+# OPENAPI
 urlpatterns += [
     path(
         "swagger/",

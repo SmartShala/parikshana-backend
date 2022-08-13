@@ -223,3 +223,20 @@ MINIO_STATIC_FILES_BUCKET = "parikshana-static"  # replacement for STATIC_ROOT
 MINIO_BUCKET_CHECK_ON_SAVE = (
     True  # Default: True // Creates bucket if missing, then save
 )
+
+
+# SWAGGER
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": True,
+    "SECURITY_DEFINITIONS": {
+        "basic": {"type": "basic"},
+        "apiKey": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer {token}",
+        },
+    },
+    "DOC_EXPANSION": "none",
+    "OPERATIONS_SORTER": "alpha",
+}
