@@ -48,10 +48,13 @@ services:
 
   # redis:
   #   container_name: redis
-  #   image: redis:7.0.4-alpine
+  #   image: redis/redis-stack-server
+  #   volumes:
+  #     - ./redis:/data
   #   environment:
   #   - ALLOW_EMPTY_PASSWORD=NO
   #   - REDIS_PASSWORD=${redis_password}
+  #   - REDIS_USERNAME=${redis_username}
   #   ports:
   #     - "6379:6379"
 
