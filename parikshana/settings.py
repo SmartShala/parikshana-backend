@@ -89,7 +89,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "parikshana.wsgi.application"
 
-
+LOGIN_URL = "/api/admin/login"
+LOGOUT_URL = "/api/admin/logout"
 BASE_URL = os.getenv("base_url")
 
 # Database
