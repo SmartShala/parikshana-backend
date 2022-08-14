@@ -43,8 +43,6 @@ urlpatterns = [
     path("school/", include("school_app.urls", namespace="School")),
 ]
 
-# Silk
-urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
 
 # JWT
 urlpatterns += [
@@ -57,6 +55,9 @@ urlpatterns = [
     path("api/", include(urlpatterns)),
 ]
 
+
+# Silk
+urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
 
 # OPENAPI
 urlpatterns += [

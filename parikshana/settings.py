@@ -179,19 +179,9 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# # minio
-# AWS_STORAGE_BUCKET_NAME = 'django'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3ManifestStaticStorage'
-# AWS_S3_ACCESS_KEY_ID = os.getenv("s3_access_key")
-# AWS_S3_SECRET_ACCESS_KEY = os.getenv("s3_access_secret")
-# AWS_S3_CUSTOM_DOMAIN = os.getenv("s3_access_point")
-
-# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/static'
-
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STORAGE_BUCKET_NAME}/media'
-
+# SILK
+SILKY_AUTHENTICATION = True  # User must login
+SILKY_AUTHORISATION = True
 
 # CELERY SETTINGS
 CELERY_BROKER_URL = f'redis://{os.getenv("redis_username")}:{os.getenv("redis_password")}@{os.getenv("redis_host", "localhost")}:{os.getenv("redis_port", 6379)}'
