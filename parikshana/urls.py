@@ -41,6 +41,7 @@ urlpatterns = [
     path("user/", include("user.urls", namespace="User")),
     path("ping/", Home.as_view(), name="namaste"),
     path("school/", include("school_app.urls", namespace="School")),
+    path("test/", include("test_app.urls", namespace="Test")),
 ]
 
 
