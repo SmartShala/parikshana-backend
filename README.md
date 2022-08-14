@@ -39,3 +39,4 @@ backend of the next revolution, as seen on github
 - `:9000` - `Min.IO` Object Storage
 - `:8888` - Flower Server (Celery Viewer)
 - `:9999` - `PGADMIN` Administrator
+- `/silk` - `django-silky` for api profiling
