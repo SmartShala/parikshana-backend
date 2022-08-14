@@ -11,5 +11,3 @@ RUN python3 -m pip install -r requirements.txt
 RUN apk --purge del .build-deps 
 RUN pip3 install gunicorn
 
-COPY . .
-

@@ -194,12 +194,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # CELERY SETTINGS
-BROKER_URL = f'redis://{os.getenv("redis_username")}:{os.getenv("redis_password")}@{os.getenv("redis_host", "localhost")}:{os.getenv("redis_port", 6379)}'
-CELERY_RESULT_BACKEND = BROKER_URL
+CELERY_BROKER_URL = f'redis://{os.getenv("redis_username")}:{os.getenv("redis_password")}@{os.getenv("redis_host", "localhost")}:{os.getenv("redis_port", 6379)}'
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
 
 # Minio
 

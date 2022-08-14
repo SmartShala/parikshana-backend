@@ -4,7 +4,7 @@ services:
   web:
     build: .
     container_name: parikshana_web
-    command: gunicorn -b 0.0.0.0:8000 -w 5 parikshana.wsgi:application --reload
+    command: gunicorn -b 0.0.0.0:8000 -w 6 parikshana.wsgi:application --reload
     ports:
       - 8000
     depends_on:
@@ -36,24 +36,6 @@ services:
     ports:
       - "5432:5432"
 
-  # pgadmin:
-  #   container_name: pgadmin4
-  #   image: dpage/pgadmin4:6.6
-  #   restart: unless-stopped
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${pgadmin_default_email}
-  #     PGADMIN_DEFAULT_PASSWORD: ${pgadmin_default_password}
-  #   ports:
-  #   - 80
-
-  # redis:
-  #   container_name: redis
-  #   image: redis:7.0.4-alpine
-  #   environment:
-  #   - ALLOW_EMPTY_PASSWORD=NO
-  #   - REDIS_PASSWORD=${redis_password}
-  #   ports:
-  #     - "6379:6379"
 
   storage:
     container_name: min.io
@@ -70,16 +52,44 @@ services:
     command: server --address ":9000" --console-address ":9001" /data
 
 
-  # celery_worker:
-  #   build:
-  #     context: .
-  #     dockerfile: ./celery/Dockerfile
-  #   image: django_celery_example_celery_worker
-  #   command: /start-celeryworker
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    command: python -m celery -A parikshana worker --loglevel=INFO -concurrency=4 -n smartworker@%n
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+
+  celery_flower:  
+    image: mher/flower
+    container_name: flower
+    environment:
+      - CELERY_BROKER_URL=redis://${redis_username}:${redis_password}@${redis_host}:${redis_port}/
+      - FLOWER_PORT=8888
+      - FLOWER_USERNAME=${flower_username}
+      - FLOWER_PASSWORD=${flower_password}
+    ports:  
+      - 8888:8888
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:6.6
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${pgadmin_default_email}
+      PGADMIN_DEFAULT_PASSWORD: ${pgadmin_default_password}
+    ports:
+    - 9999:80
+
+  # redis:
+  #   container_name: redis
+  #   image: redis/redis-stack-server
   #   volumes:
-  #     - .:/app
-  #   env_file:
-  #     - ./.env/.dev-sample
-  #   depends_on:
-  #     - redis
-  #     - db
+  #     - ./redis:/data
+  #   environment:
+  #   - ALLOW_EMPTY_PASSWORD=NO
+  #   - REDIS_PASSWORD=${redis_password}
+  #   - REDIS_USERNAME=${redis_username}
+  #   ports:
+  #     - "6379:6379"
