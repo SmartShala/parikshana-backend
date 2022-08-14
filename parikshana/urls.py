@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.authentication import BasicAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .views import Home
+from .views import index, Home
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -52,6 +52,7 @@ urlpatterns += [
 
 # Final url patterns
 urlpatterns = [
+    path("", index, name="index"),
     path("api/", include(urlpatterns)),
 ]
 
