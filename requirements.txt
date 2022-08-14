@@ -31,8 +31,10 @@ djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0
 drf-yasg==1.21.3
 et-xmlfile==1.1.0
+flower==1.2.0
 gprof2dot==2021.2.21
 gunicorn==20.1.0
+humanize==4.3.0
 idna==3.3
 inflection==0.5.1
 itypes==1.2.0
@@ -48,6 +50,7 @@ openpyxl==3.0.10
 packaging==21.3
 pathspec==0.9.0
 platformdirs==2.5.2
+prometheus-client==0.14.1
 prompt-toolkit==3.0.30
 psycopg2-binary==2.9.3
 pycodestyle==2.8.0
@@ -66,6 +69,7 @@ sqlparse==0.4.2
 tablib==3.2.1
 toml==0.10.2
 tomli==2.0.1
+tornado==6.2
 tzdata==2022.1
 uritemplate==4.1.1
 urllib3==1.26.10

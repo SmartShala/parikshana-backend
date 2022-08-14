@@ -43,7 +43,6 @@ services:
     environment:
       - MINIO_ROOT_USER=${minio_root_user}
       - MINIO_ROOT_PASSWORD=${minio_root_password}
-      - MINIO_
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -55,22 +54,28 @@ services:
   celery_worker:
     build: .
     container_name: celery_worker
-    command: python -m celery -A parikshana worker --loglevel=INFO -concurrency=4 -n smartworker@%n
+    command: python -m celery -A parikshana worker --loglevel=INFO --concurrency=4 -n smartworker@%n -E
     volumes:
       - .:/code
     env_file:
       - .env
+    depends_on:
+      - web
 
   celery_flower:  
     image: mher/flower
     container_name: flower
+    command: celery flower --persistent=True --basic_auth=${flower_username}:${flower_password}
     environment:
       - CELERY_BROKER_URL=redis://${redis_username}:${redis_password}@${redis_host}:${redis_port}/
       - FLOWER_PORT=8888
-      - FLOWER_USERNAME=${flower_username}
-      - FLOWER_PASSWORD=${flower_password}
+      - TZ=Asia/Kolkata
     ports:  
       - 8888:8888
+    volumes:
+      - ./flower_data:/data
+    depends_on:
+      - celery_worker
 
   pgadmin:
     container_name: pgadmin4

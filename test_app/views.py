@@ -2,13 +2,9 @@ from rest_framework.views import APIView
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
-
-# from django_filters import *
 from parikshana.custom_errors import ExceptionMixin
 from parikshana.custom_perms import IsAdminUser
 
-# from .serializers import SchoolSerializer, TeacherSerializer
-from .models import School, SchoolTeacher
 from parikshana.custom_errors import (
     Http404,
     Http200,
@@ -18,5 +14,11 @@ from parikshana.custom_errors import (
     Http403,
 )
 
+from test_app.tasks import work
 
-# class 
+
+class TestApp(APIView):
+    def get(self, request):
+        res = work.apply_async(args=["John", "Doe"])
+        print(res)
+        return Response({"message": "hello world"})
