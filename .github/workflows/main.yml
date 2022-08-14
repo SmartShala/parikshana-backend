@@ -23,7 +23,11 @@ jobs:
           script: |
             cd parikshana-backend
             git pull
+            docker build . --tag django_web
             docker-compose up -d --build
+            echo "Successfully created"
             docker-compose exec web python manage.py makemigrations
             docker-compose exec web python manage.py migrate
+            echo "Migrated"
+            curl  -f -LI http://parikshana.smartshala.live/api/ping 
             echo "Successfully deployed"
