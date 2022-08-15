@@ -1,25 +1,9 @@
 from rest_framework.response import Response
 from typing import Union, Optional
-
-validExceptions = ()
-
-
-class ExceptionMixin:
-    def exception_handler(exc, context):
-        """A low profile exception Handler base"""
-        if exc in validExceptions:
-            return Response(
-                data={
-                    "message": exc.message,
-                    "data": exc.data,
-                },
-                status=exc.status_code,
-            )
-        "Pass through error if unhandled"
-        raise exc
+from rest_framework.exceptions import APIException
 
 
-class BaseExceptions(Exception):
+class BaseExceptions(APIException):
     message = ""
     data = {}
     status_code = 0
@@ -81,3 +65,31 @@ class Http200(BaseException):
 
 class Http201(BaseException):
     message = "Object is created Successfully!"
+
+
+validExceptions = (
+    Http400,
+    Http401,
+    Http402,
+    Http403,
+    Http404,
+    Http418,
+    Http500,
+    Http200,
+    Http201,
+)
+
+
+class ExceptionMixin:
+    def handle_exception(self, exc):
+        """A low profile exception Handler base"""
+        if exc in validExceptions:
+            return Response(
+                data={
+                    "message": exc.message,
+                    "data": exc.data,
+                },
+                status=exc.status_code,
+            )
+        "Pass through error if unhandled"
+        return super().handle_exception(exc)

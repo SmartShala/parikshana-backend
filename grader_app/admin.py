@@ -4,3 +4,4 @@ from grader_app.models import *
 
 admin.site.register(AnsweredQuestion)
 admin.site.register(StudentGrade)
+admin.site.register(AnswerSheet)

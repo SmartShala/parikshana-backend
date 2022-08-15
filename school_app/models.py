@@ -76,6 +76,7 @@ class SchoolStudent(models.Model):
     def __str__(self):
         return f"{self.name}: {self.age}: {self.std_id}: {self.sex}"
 
+
 class SchoolClass(models.Model):
     description = models.TextField(null=True, blank=True)
     standard = models.ForeignKey(
@@ -95,14 +96,10 @@ class SchoolClass(models.Model):
     teachers = models.ManyToManyField(
         User,
         related_name="school_class_teachers",
-        null=True,
-        blank=True,
     )
     students = models.ManyToManyField(
         SchoolStudent,
         related_name="school_class_students",
-        null=True,
-        blank=True,
     )
 
     class Meta:
@@ -110,4 +107,3 @@ class SchoolClass(models.Model):
 
     def __str__(self):
         return f"{self.standard} {self.subject}"
-
