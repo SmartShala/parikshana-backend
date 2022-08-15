@@ -29,6 +29,7 @@ class uploadTestPaperView(generics.ListAPIView):
 
     parser_classes = (MultiPartParser,)
     pagination_class = CustomPagination
+    serializer_class = AnswerSheetSerializer
 
     def get_queryset(self):
         queryset = AnswerSheet.objects.filter(
@@ -63,8 +64,7 @@ class uploadTestPaperView(generics.ListAPIView):
     )
     def get(self, request, *args, **kwargs):
         # Setting it here to avoid manual-schema to get overwritten
-        self.serializer_class = AnswerSheetSerializer
-        super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_summary="Upload Answer Sheet",
@@ -76,6 +76,7 @@ class uploadTestPaperView(generics.ListAPIView):
         ## ALl hail the `form-alities` of HTTP GOD
         """,
         operation_id="Upload Answer Sheet",
+        request_body=AnswerSheetUploadSerializer,
         manual_parameters=[
             openapi.Parameter(
                 name="image",
