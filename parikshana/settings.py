@@ -28,7 +28,7 @@ load_dotenv(dotenv_path=BASE_DIR / ".env")
 SECRET_KEY = os.getenv("secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("debug", 0) == "1"
 
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "user.User"

@@ -65,7 +65,7 @@ services:
   celery_flower:  
     image: mher/flower
     container_name: flower
-    command: celery flower --persistent=True --basic_auth=${flower_username}:${flower_password}
+    command: celery flower --basic_auth=${flower_username}:${flower_password}
     environment:
       - CELERY_BROKER_URL=redis://${redis_username}:${redis_password}@${redis_host}:${redis_port}/
       - FLOWER_PORT=8888
