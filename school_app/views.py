@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 # from django_filters import *
-from parikshana.custom_errors import ExceptionMixin
 from parikshana.custom_perms import IsAdminUser
 from .serializers import SchoolSerializer, TeacherSerializer
 from .models import School, SchoolTeacher
@@ -22,7 +21,7 @@ from parikshana.custom_errors import (
 # Requires Auth : Only admin users
 
 
-class CreateSchool(generics.ListCreateAPIView, ExceptionMixin):
+class CreateSchool(generics.ListCreateAPIView):
     """Hello world"""
 
     permission_classes = [IsAdminUser]
@@ -35,7 +34,7 @@ class CreateSchool(generics.ListCreateAPIView, ExceptionMixin):
         ).order_by("created_at")
 
 
-class UpdateDeleteSchool(generics.RetrieveUpdateAPIView, ExceptionMixin):
+class UpdateDeleteSchool(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAdminUser]
 
     serializer_class = SchoolSerializer
@@ -55,7 +54,7 @@ class UpdateDeleteSchool(generics.RetrieveUpdateAPIView, ExceptionMixin):
         raise Http200("Deleted Successfully")
 
 
-class AddGetTeachers(generics.ListCreateAPIView, ExceptionMixin):
+class AddGetTeachers(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = TeacherSerializer
     filter_backends = [SearchFilter]
@@ -76,7 +75,7 @@ class AddGetTeachers(generics.ListCreateAPIView, ExceptionMixin):
             raise Http400("Please Provide School ID")
 
 
-class UpdateDeleteTeachers(generics.RetrieveUpdateDestroyAPIView, ExceptionMixin):
+class UpdateDeleteTeachers(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = TeacherSerializer
 
