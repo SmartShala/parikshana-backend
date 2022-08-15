@@ -34,7 +34,7 @@ class uploadTestPaperView(generics.ListAPIView):
         queryset = AnswerSheet.objects.filter(
             test__created_by=self.request.user,
             test=self.kwargs["test_id"],
-        )
+        ).order_by("-updated_at")
         return queryset
 
     def get_object(self):
