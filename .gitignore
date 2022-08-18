@@ -154,3 +154,7 @@ media/*
 #.idea/
 
 data/*
+flower/*
+node_modules/
+landing-page/
+.vscode/
