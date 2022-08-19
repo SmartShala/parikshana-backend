@@ -7,7 +7,7 @@
 
 # In progress
 
-- [] Clean up code
-- [] Modularize the code
-- [] Fix the sorting of contours
+- [ ] Clean up code
+- [ ] Modularize the code
+- [ ] Fix the sorting of contours
  
