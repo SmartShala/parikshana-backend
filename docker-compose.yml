@@ -62,6 +62,9 @@ services:
     depends_on:
       - web
 
+  celery_beat:
+    build: .
+
   celery_flower:  
     image: mher/flower
     container_name: flower

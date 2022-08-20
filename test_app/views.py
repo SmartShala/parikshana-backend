@@ -1,21 +1,26 @@
+from urllib import response
 from django.db.models import Count, Sum, F
+
 from rest_framework.views import APIView
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.exceptions import NotFound, PermissionDenied
+
 from parikshana.custom_paginator import CustomPagination
 from parikshana.custom_perms import IsAdminUser
 
-from parikshana.custom_errors import (
-    Http404,
-    Http200,
-    Http201,
-    Http401,
-    Http400,
-    Http403,
+from school_app.models import SchoolSection
+from test_app.serializers import (
+    StandardSerializer,
+    SubjectSerializer,
+    TestSerializer,
+    TestCreateSerializer,
 )
-from test_app.serializers import TestSerializer
-from test_app.models import Test
+from test_app.models import Test, Topic, Standard, Subject
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class TestView(generics.ListCreateAPIView):
@@ -39,6 +44,21 @@ class TestView(generics.ListCreateAPIView):
             .order_by("-updated_at")
         )
 
+    @swagger_auto_schema(
+        operation_summary="Create a Test",
+        operation_description="""Create a Test under a teacher.""",
+        operation_id="Create Test",
+        request_body=TestCreateSerializer,
+    )
+    def post(self, request, *args, **kwargs):
+        """Create a test"""
+        serializer = TestCreateSerializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class UpdateTestView(generics.RetrieveUpdateDestroyAPIView):
     """Update , retrieve and delete tests"""
@@ -52,4 +72,34 @@ class UpdateTestView(generics.RetrieveUpdateDestroyAPIView):
                 id=self.kwargs["test_id"], created_by=self.request.user
             )
         except Test.DoesNotExist:
-            raise Http404("Test not found")
+            raise NotFound("Test not found")
+
+
+class getTestFormData(APIView):
+    @swagger_auto_schema(
+        operation_summary="Get Test Form Data",
+        operation_id="Get Test Form Data",
+        operation_description="""Get Test Form data:
+        Returns:
+        ```
+        {
+            "standards":[
+                id,name
+            ],
+            "subjects":[
+                id,name
+            ]
+        }
+        ```
+        """,
+    )
+    def get(self, request, *args, **kwargs):
+        data = {
+            "standards": Standard.objects.all()
+            .order_by("name")
+            .values_list("id", "name"),
+            "subjects": Subject.objects.all()
+            .order_by("name")
+            .values_list("id", "name"),
+        }
+        return Response(data, status=status.HTTP_200_OK)
