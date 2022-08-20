@@ -1,5 +1,5 @@
 from django.urls import path
-from test_app.views import TestView, UpdateTestView, getTestFormData
+from test_app.views import TestView, UpdateTestView, getTestFormData, AddQuestions
 
 
 app_name = "Test"
@@ -10,4 +10,7 @@ urlpatterns = [
     path(
         "<int:test_id>/", UpdateTestView.as_view(), name="Update_Test"
     ),  # GET PUT PATCH DELETE
+    path(
+        "<int:test_id>/questions/", AddQuestions.as_view(), name="Add view Questions"
+    ),  # GET POST
 ]

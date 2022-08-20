@@ -12,12 +12,11 @@ from parikshana.custom_perms import IsAdminUser
 
 from school_app.models import SchoolSection
 from test_app.serializers import (
-    StandardSerializer,
-    SubjectSerializer,
     TestSerializer,
     TestCreateSerializer,
+    QuestionSerializer,
 )
-from test_app.models import Test, Topic, Standard, Subject
+from test_app.models import Question, Test, Topic, Standard, Subject
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -34,8 +33,8 @@ class TestView(generics.ListCreateAPIView):
         return (
             Test.objects.filter(created_by=self.request.user)
             .annotate(
-                question_count=Count("questions"),
-                total_score=Sum("test_mapping__marks"),
+                question_count=Count("test_question"),
+                total_score=Sum("test_question__marks"),
                 topic_name=F("topic__name"),
                 standard=F("topic__standard__name"),
                 subject=F("topic__subject__name"),
@@ -92,6 +91,17 @@ class getTestFormData(APIView):
         }
         ```
         """,
+        responses={
+            "200": openapi.Response(
+                description="Successfully Fetched Data",
+                examples={
+                    "application/json": {
+                        "standards": [[1, 1], [1, 2]],
+                        "subjects": [[1, "Physics"], [2, "Chemistry"]],
+                    }
+                },
+            )
+        },
     )
     def get(self, request, *args, **kwargs):
         data = {
@@ -103,3 +113,20 @@ class getTestFormData(APIView):
             .values_list("id", "name"),
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+class AddQuestions(generics.ListCreateAPIView):
+    serializer_class = QuestionSerializer
+
+    def get_queryset(self):
+        return Question.objects.filter(
+            test_id=self.kwargs["test_id"], test__created_by=self.request.user
+        ).order_by("id")
+
+    def get_object(self):
+        try:
+            return Test.objects.get(
+                id=self.kwargs["test_id"], created_by=self.request.user
+            )
+        except Test.DoesNotExist:
+            raise NotFound("Test not found")

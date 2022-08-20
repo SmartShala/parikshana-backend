@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from test_app.models import Standard, Subject, Test, Topic
+from test_app.models import Question, Standard, Subject, Test, Topic
 from drf_yasg.utils import swagger_serializer_method
 
 
@@ -70,3 +70,24 @@ class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ("id", "name")
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    options = serializers.JSONField(default=list, read_only=False)
+    marks = serializers.IntegerField(default=1)
+    correct_option = serializers.IntegerField(default=0)
+
+    class Meta:
+        model = Question
+
+        fields = (
+            "id",
+            "question",
+            "options",
+            "correct_option",
+            "marks",
+        )
+
+    def create(self, validated_data):
+        validated_data["test_id"] = self.context["view"].kwargs["test_id"]
+        return super().create(validated_data)

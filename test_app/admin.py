@@ -12,7 +12,6 @@ admin.site.register(
         Topic,
         Question,
         Test,
-        TestQuestionMapping,
     ],
     ImportExportModelAdmin,
 )
