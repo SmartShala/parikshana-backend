@@ -37,6 +37,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    path("grappelli/", include("grappelli.urls")),  # grappelli URLS
     path("admin/", admin.site.urls),
     path("user/", include("user.urls", namespace="User")),
     path("ping/", Home.as_view(), name="namaste"),
