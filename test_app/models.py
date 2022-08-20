@@ -14,7 +14,7 @@ class Board(models.Model):
 
 
 class Standard(models.Model):
-    name = models.CharField(max_length=20, null=True, blank=True)
+    name = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -43,7 +43,11 @@ class Topic(models.Model):
         Standard, on_delete=models.CASCADE, related_name="topic_standard"
     )
     board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, related_name="topic_board"
+        Board,
+        on_delete=models.CASCADE,
+        related_name="topic_board",
+        null=True,
+        blank=True,
     )
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -83,6 +87,9 @@ class Question(models.Model):
         db_table = "question_bank"
 
 
+from school_app.models import SchoolSection
+
+
 class Test(models.Model):
     name = models.CharField(max_length=120, null=True, blank=True)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.CASCADE)
@@ -102,9 +109,16 @@ class Test(models.Model):
         blank=True,
         related_name="test_created_by",
     )
-
+    section = models.ForeignKey(
+        SchoolSection,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="test_section",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    pending = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

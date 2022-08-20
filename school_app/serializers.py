@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from school_app.models import School, SchoolClass, SchoolTeacher, SchoolStudent
+from school_app.models import School, SchoolSection, SchoolTeacher, SchoolStudent
 from test_app.models import Subject, Standard
 
 

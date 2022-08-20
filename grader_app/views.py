@@ -76,7 +76,6 @@ class uploadTestPaperView(generics.ListAPIView):
         ## ALl hail the `form-alities` of HTTP GOD
         """,
         operation_id="Upload Answer Sheet",
-        request_body=AnswerSheetUploadSerializer,
         manual_parameters=[
             openapi.Parameter(
                 name="image",
