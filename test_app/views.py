@@ -1,3 +1,4 @@
+from typing import List
 from urllib import response
 from django.db.models import Count, Sum, F
 
@@ -49,7 +50,10 @@ class TestView(generics.ListCreateAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="standard", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER
+                name="standard",
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Standard's ID to filter tests by standard",
             ),
         ]
     )
@@ -153,3 +157,16 @@ class AddQuestions(generics.ListCreateAPIView):
             )
         except Test.DoesNotExist:
             raise NotFound("Test not found")
+
+    @swagger_auto_schema(
+        request_body=QuestionSerializer(many=True),
+    )
+    def post(self, request, *args, **kwargs):
+        test = self.get_object()
+        qs = []
+        for question in request.data:
+            QuestionSerializer(data=question).is_valid(raise_exception=True)
+            qs.append(Question(test=test, **question))
+        response = Question.objects.bulk_create(qs)
+        serializer = QuestionSerializer(response, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
