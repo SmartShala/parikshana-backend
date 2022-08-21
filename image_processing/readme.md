@@ -7,7 +7,8 @@
 
 # In progress
 
-- [x] Clean up code
-- [ ] Modularize the code
+- [x] <s>Clean up code</s>
+- [x] <s>Modularize the code</s>
 - [ ] Fix the sorting of contours
+- [ ] Integrate into main backend
  
