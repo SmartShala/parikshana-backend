@@ -10,14 +10,14 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from parikshana.custom_paginator import CustomPagination
 from parikshana.custom_perms import IsAdminUser
 
-from school_app.models import SchoolSection
+from school_app.models import SchoolSection, SchoolTeacher
 from test_app.serializers import (
     TestSerializer,
     TestCreateSerializer,
     QuestionSerializer,
 )
 from test_app.models import Question, Test, Topic, Standard, Subject
-
+from django_filters import rest_framework as filters
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -27,10 +27,9 @@ class TestView(generics.ListCreateAPIView):
 
     serializer_class = TestSerializer
     pagination_class = CustomPagination
-    filter_fields = ("name", "id", "topic")
 
     def get_queryset(self):
-        return (
+        queryset = (
             Test.objects.filter(created_by=self.request.user)
             .annotate(
                 question_count=Count("test_question"),
@@ -42,6 +41,23 @@ class TestView(generics.ListCreateAPIView):
             )
             .order_by("-updated_at")
         )
+        _standard = self.request.query_params.get("standard")
+        if _standard:
+            queryset = queryset.filter(topic__standard_id=_standard)
+        return queryset
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="standard", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """
+        List all tests under a teacher
+        """
+        return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_summary="Create a Test",
@@ -103,12 +119,19 @@ class getTestFormData(APIView):
             )
         },
     )
+    def get_teacher(self):
+        try:
+            return SchoolTeacher.objects.get(teacher=self.request.user)
+        except SchoolTeacher.DoesNotExist:
+            raise NotFound("You are not assigned as a Teacher")
+
     def get(self, request, *args, **kwargs):
+        teacher = self.get_teacher()
         data = {
-            "standards": Standard.objects.all()
+            "standards": Standard.objects.filter(school_teacher_standards=teacher)
             .order_by("name")
             .values_list("id", "name"),
-            "subjects": Subject.objects.all()
+            "subjects": teacher.subjects.all()
             .order_by("name")
             .values_list("id", "name"),
         }

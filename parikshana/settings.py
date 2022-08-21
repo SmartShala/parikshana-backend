@@ -71,6 +71,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "parikshana.urls"
 
+CORS_ALLOWED_ORIGINS = [
+    "*",
+    "http://localhost:1234",
+    "http://parikshana.smartshala.live/",
+]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
