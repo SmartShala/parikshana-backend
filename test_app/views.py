@@ -49,7 +49,10 @@ class TestView(generics.ListCreateAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="standard", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER
+                name="standard",
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Standard's ID to filter tests by standard",
             ),
         ]
     )
