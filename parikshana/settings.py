@@ -72,9 +72,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = "parikshana.urls"
 
 CORS_ALLOWED_ORIGINS = [
-    "*",
+    "http://*",
+    "https://*",
     "http://localhost:1234",
-    "http://parikshana.smartshala.live/",
+    "http://parikshana.smartshala.live",
 ]
 
 TEMPLATES = [

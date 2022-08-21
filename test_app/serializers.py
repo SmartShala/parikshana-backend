@@ -73,7 +73,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    options = serializers.JSONField(default=list, read_only=False)
+    options = serializers.ListField(child=serializers.CharField())
     marks = serializers.IntegerField(default=1)
     correct_option = serializers.IntegerField(default=0)
 
@@ -87,7 +87,3 @@ class QuestionSerializer(serializers.ModelSerializer):
             "correct_option",
             "marks",
         )
-
-    def create(self, validated_data):
-        validated_data["test_id"] = self.context["view"].kwargs["test_id"]
-        return super().create(validated_data)

@@ -1,5 +1,6 @@
 from django.db import models
 from user.models import User
+from django.contrib.postgres.fields import ArrayField
 
 
 class Board(models.Model):
@@ -100,7 +101,11 @@ class Question(models.Model):
         Test, on_delete=models.CASCADE, related_name="test_question", null=True
     )
     question = models.CharField(max_length=250, null=True, blank=True)
-    options = models.JSONField(default=list)
+    options = ArrayField(
+        models.CharField(max_length=50, null=True, blank=True),
+        size=4,
+        null=True,
+    )
     correct_option = models.PositiveSmallIntegerField(
         default=0, null=True, blank=True
     )  # 0,1,2,3
