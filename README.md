@@ -4,7 +4,8 @@ backend of the next revolution, as seen on github
 
 ## TO run :
 
-`docker-compose up -d`
+- `docker build . --tag django_web`
+- `docker-compose up -d`
 
 ## ENV:
 
