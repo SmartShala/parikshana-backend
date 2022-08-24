@@ -30,7 +30,6 @@ class AnswerSheetSerializer(serializers.ModelSerializer):
 
 class AnswerSheetUploadSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=True)
-    test = serializers.IntegerField(required=False)
 
     class Meta:
         model = AnswerSheet

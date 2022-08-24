@@ -94,4 +94,4 @@ class uploadTestPaperView(generics.ListAPIView):
             )
             return Response({"message": "Test Paper Uploaded Successfully"}, status=201)
         else:
-            raise NotFound(data=serializer.errors)
+            return Response(serializer.errors, status=400)
