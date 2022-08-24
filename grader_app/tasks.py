@@ -9,7 +9,7 @@ def process_images(test_id, test_paper_img_link, test_ans_id):
     try:
         test_ans_id: AnswerSheet = AnswerSheet.objects.get(id=test_ans_id)
     except:
-        raise ("Invalid Answer Sheet ID")
+        raise Exception("Invalid Answer Sheet ID")
     test_ans_id.status = "Processing"
     test_ans_id.save()
     # Gets Marked List Details
