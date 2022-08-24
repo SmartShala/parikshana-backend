@@ -1,9 +1,11 @@
+from operator import truediv
 from typing import OrderedDict
 from imutils.perspective import four_point_transform
 import numpy as np
 import imutils
 from imutils import contours
 import cv2
+from functools import cmp_to_key
 #"sample_sheet#5A.jpeg"
 
 #------------Class for extracting answers-----------------
@@ -173,7 +175,7 @@ class Sheet:
 		#print(len(rectCon))
 		#show(answermask, "inside_c"+str(len(c)))
 		answermask=cv2.GaussianBlur(answermask,(5,5),0)
-		mc = cv2.findContours(answermask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1 )[0]
+		mc = cv2.findContours(answermask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE )[0]
 		mcf=[]
 		for i in mc:
 			(x,y,w,h) = cv2.boundingRect(i)
@@ -188,7 +190,19 @@ class Sheet:
 		cm = img.copy()
 		for(i,c) in enumerate(mcf):
 			cm=contours.label_contour(cm, c,i)
-		#self.show(cm, "CMMM")
+		self.show(cm, "CMMM")
+
+	def sortCnts(conta, contb):
+		print(conta, contb)
+		(ax,ay,aw,ah) = cv2.boundingRect(conta)
+		(bx,by,bw,bh) = cv2.boundingRect(contb)
+		if abs(ay-by)> 50:
+			if ay>by:
+				return 1
+			return -1
+		if ax>bx:
+			return 1
+		return -1
 
 
 	#----------Retrieves final list of answers------------------
@@ -200,7 +214,8 @@ class Sheet:
 		res = np.zeros(box.shape[0:2], dtype='uint8')
 		#print("length",len(mcf))
 		#mcf = contours.sort_contours(mcf,method="top-to-bottom")[0]
-		#self.labelImage(self.crop, mcf)
+		sorted(mcf, key=cmp_to_key(self.sortCnts))
+		self.labelImage(self.crop, mcf)
 		for i in range(len(mcf)):
 			m = np.zeros(self.crop.shape[0:2],dtype='uint8')
 			# print(box.shape)
