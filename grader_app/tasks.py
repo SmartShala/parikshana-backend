@@ -5,7 +5,8 @@ from test_app.models import Test, Question
 
 
 @shared_task
-def process_images(test_id, test_paper_img_link, test_ans_id):
+def process_images(test_id, test_ans_id):
+
     try:
         test_ans_id: AnswerSheet = AnswerSheet.objects.get(id=test_ans_id)
     except:
@@ -13,7 +14,8 @@ def process_images(test_id, test_paper_img_link, test_ans_id):
     test_ans_id.status = "Processing"
     test_ans_id.save()
     # Gets Marked List Details
-    marked_list = Sheet(test_paper_img_link)
+    marked_list = Sheet(test_ans_id.image.file.read()).answerlist
+    test_ans_id.image.file.close()
     questions = Question.objects.filter(test_id=test_id).order_by("created_at")
     total_qs = questions.count()
     final_score = 0

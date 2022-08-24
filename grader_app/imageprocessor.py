@@ -11,9 +11,11 @@ import requests
 
 
 class Sheet:
-    def __init__(self, imgAddress):
-        image = requests.get(imgAddress).content
-        self.original = cv2.imdecode(image)  # Original image
+    def __init__(self, img):
+        # read image as an numpy array
+        self.original = np.asarray(bytearray(img), dtype="uint8")
+        # use imdecode function
+        self.original = cv2.imdecode(self.original, cv2.IMREAD_COLOR)
         self.gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)  # Grayscale image
         blurred = cv2.GaussianBlur(self.gray, (5, 5), 0)
         edged = cv2.Canny(blurred, 75, 200)
@@ -201,7 +203,7 @@ class Sheet:
             cv2.drawContours(m, mcf[i : i + 1], -1, 255, -1)
             # show(m, "BOX"+str(i%10))
             m = cv2.bitwise_and(box, box, mask=m)
-            self.show(m, "BOX" + str(i % 10))
+            # self.show(m, "BOX" + str(i % 10))
             # show(m, "WHAT")
             # m = cv2.cvtColor(m, cv2.COLOR_BGR2GRAY)
             # show(m, "BOX"+str(count_columns%4))
