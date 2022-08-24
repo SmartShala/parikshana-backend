@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from grader_app.models import AnswerSheet
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_serializer_method
 
 
 class AnswerSheetSerializer(serializers.ModelSerializer):

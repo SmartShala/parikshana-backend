@@ -7,6 +7,7 @@ from parikshana.custom_paginator import CustomPagination
 from test_app.models import Test
 from grader_app.models import AnswerSheet
 from grader_app.serializers import AnswerSheetSerializer, AnswerSheetUploadSerializer
+from grader_app.tasks import process_images
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.exceptions import (
@@ -77,15 +78,6 @@ class uploadTestPaperView(generics.ListAPIView):
         """,
         operation_id="Upload Answer Sheet",
         request_body=AnswerSheetUploadSerializer,
-        manual_parameters=[
-            openapi.Parameter(
-                name="image",
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                required=True,
-                description="Answer Sheet Image",
-            )
-        ],
     )
     def post(self, request, *args, **kwargs):
         test_obj: Test = self.get_object()
@@ -97,8 +89,9 @@ class uploadTestPaperView(generics.ListAPIView):
         )
         if serializer.is_valid():
             inst = serializer.save()
-            # Call the celery Function here
-            # inst.job_id = work.apply_async(args=[test_obj.id, image.name])
+            inst.job_id = process_images.apply_async(
+                args=[test_obj.id, inst.image.url, inst.id]
+            )
             return Response({"message": "Test Paper Uploaded Successfully"}, status=201)
         else:
-            raise NotFound(data=serializer.errors)
+            return Response(serializer.errors, status=400)

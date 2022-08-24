@@ -34,8 +34,8 @@ ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "user.User"
 
 # Application definition
-
 INSTALLED_APPS = [
+    "grappelli",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -71,6 +71,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "parikshana.urls"
 
+CORS_ALLOWED_ORIGINS = [
+    "http://*",
+    "https://*",
+    "http://localhost:1234",
+    "http://parikshana.smartshala.live",
+]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -78,6 +85,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "django.template.context_processors.request",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -147,7 +155,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,

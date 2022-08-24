@@ -77,7 +77,8 @@ class SchoolStudent(models.Model):
         return f"{self.name}: {self.age}: {self.std_id}: {self.sex}"
 
 
-class SchoolClass(models.Model):
+class SchoolSection(models.Model):
+    name = models.CharField(max_length=1, default="A")
     description = models.TextField(null=True, blank=True)
     standard = models.ForeignKey(
         Standard,
@@ -85,13 +86,6 @@ class SchoolClass(models.Model):
         null=True,
         blank=True,
         related_name="school_class_standard",
-    )
-    subject = models.ForeignKey(
-        Subject,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="school_class_subject",
     )
     teachers = models.ManyToManyField(
         User,
@@ -103,7 +97,7 @@ class SchoolClass(models.Model):
     )
 
     class Meta:
-        db_table = "school_class"
+        db_table = "school_section"
 
     def __str__(self):
-        return f"{self.standard} {self.subject}"
+        return f"{self.standard}"

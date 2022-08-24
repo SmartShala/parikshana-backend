@@ -2,7 +2,7 @@ version: '3'
 services:
 
   web:
-    build: .
+    image: django_web
     container_name: parikshana_web
     command: gunicorn -b 0.0.0.0:8000 -w 6 parikshana.wsgi:application --reload
     ports:
@@ -52,7 +52,7 @@ services:
 
 
   celery_worker:
-    build: .
+    image: django_web
     container_name: celery_worker
     command: python -m celery -A parikshana worker --loglevel=INFO --concurrency=4 -n smartworker@%n -E
     volumes:
