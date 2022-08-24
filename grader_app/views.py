@@ -97,6 +97,7 @@ class uploadTestPaperView(generics.ListAPIView):
                 ],
                 soft_time_limit=100,
             )
+            inst.status = "Queued"
             inst.save()
             return Response({"message": "Test Paper Uploaded Successfully"}, status=201)
         else:
