@@ -93,10 +93,11 @@ class uploadTestPaperView(generics.ListAPIView):
             inst.job_id = process_images.apply_async(
                 args=[
                     test_obj.id,
-                    settings.MINIO_ENDPOINT + inst.image.url,
                     inst.id,
-                ]
+                ],
+                soft_time_limit=100,
             )
+            inst.status = "Queued"
             inst.save()
             return Response({"message": "Test Paper Uploaded Successfully"}, status=201)
         else:

@@ -200,12 +200,11 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
-
+CELERY_TASK_TIME_LIMIT = 60 * 60
 # Minio
 
 MINIO_PRIVATE_BUCKETS = ["parikshana-media", "parikshana-static"]
 MINIO_PUBLIC_BUCKETS = []
-
 STATICFILES_STORAGE = "django_minio_backend.models.MinioBackendStatic"
 DEFAULT_FILE_STORAGE = "django_minio_backend.models.MinioBackend"
 
