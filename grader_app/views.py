@@ -58,7 +58,7 @@ class uploadTestPaperView(generics.ListAPIView):
             - `queued` : The answer sheet is queued for processing
             - `processing` : The answer sheet is being processed
             - `successful` : The answer sheet is successfully processed
-            - `failed` : The answer sheet has failed to be processed
+            - `failed` : The answer sheet has failed to be processe`d
         - `score` : Score of the answer sheet if the answer sheet `status` is `successful`
         - `failed` : Boolean value indicating if the answer sheet has failed to be processed.
         """,
@@ -91,10 +91,10 @@ class uploadTestPaperView(generics.ListAPIView):
         if serializer.is_valid():
             inst = serializer.save()
             inst.job_id = process_images.apply_async(
-                args=[
-                    test_obj.id,
-                    inst.id,
-                ],
+                kwargs={
+                    "test_id": test_obj.id,
+                    "test_ans_id": inst.id,
+                },
                 soft_time_limit=100,
             )
             inst.status = "Queued"
