@@ -1,5 +1,5 @@
 # from django.db.models import Count, Sum, F
-from django.conf import Settings
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework import generics, permissions
 from rest_framework.response import Response
@@ -93,10 +93,11 @@ class uploadTestPaperView(generics.ListAPIView):
             inst.job_id = process_images.apply_async(
                 args=[
                     test_obj.id,
-                    Settings.MINIO_ENDPOINT + inst.image.url,
+                    settings.MINIO_ENDPOINT + inst.image.url,
                     inst.id,
                 ]
             )
+            inst.save()
             return Response({"message": "Test Paper Uploaded Successfully"}, status=201)
         else:
             return Response(serializer.errors, status=400)
