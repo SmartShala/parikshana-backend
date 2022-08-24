@@ -93,7 +93,7 @@ class uploadTestPaperView(generics.ListAPIView):
             inst.job_id = process_images.apply_async(
                 args=[
                     test_obj.id,
-                    settings.MINIO_ENDPOINT + inst.image.url,
+                    inst.image.url,
                     inst.id,
                 ]
             )
