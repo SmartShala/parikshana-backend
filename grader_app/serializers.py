@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from grader_app.models import AnswerSheet
+from grader_app.models import AnswerSheet, AnsweredQuestion
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_serializer_method
 
@@ -39,3 +39,27 @@ class AnswerSheetUploadSerializer(serializers.ModelSerializer):
             "image",
         )
         read_only_fields = ("id",)
+
+
+class AnsweredQuestionSerializer(serializers.ModelSerializer):
+    question = serializers.CharField(source="question.question")
+    answer = serializers.SerializerMethodField()
+    correct_answer = serializers.SerializerMethodField()
+    options = serializers.ListField(child=serializers.CharField())
+    correct_answer = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AnsweredQuestion
+        fields = (
+            "answer",
+            "question",
+            "is_correct",
+            "options",
+            "correct_answer",
+        )
+
+    def get_answer(self, obj):
+        return obj.question.options[obj.answer]
+
+    def get_correct_answer(self, obj):
+        return obj.question.options[obj.question.correct_option]

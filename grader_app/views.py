@@ -6,8 +6,12 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from parikshana.custom_paginator import CustomPagination
 from test_app.models import Test
-from grader_app.models import AnswerSheet
-from grader_app.serializers import AnswerSheetSerializer, AnswerSheetUploadSerializer
+from grader_app.models import AnswerSheet, AnsweredQuestion
+from grader_app.serializers import (
+    AnswerSheetSerializer,
+    AnswerSheetUploadSerializer,
+    AnsweredQuestionSerializer,
+)
 from grader_app.tasks import process_images
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -94,6 +98,7 @@ class uploadTestPaperView(generics.ListAPIView):
                 kwargs={
                     "test_id": test_obj.id,
                     "test_ans_id": inst.id,
+                    "is_shuffled": test_obj.is_shuffled,
                 },
                 soft_time_limit=100,
             )
@@ -102,3 +107,17 @@ class uploadTestPaperView(generics.ListAPIView):
             return Response({"message": "Test Paper Uploaded Successfully"}, status=201)
         else:
             return Response(serializer.errors, status=400)
+
+
+class AnsweredQuestionListView(generics.ListAPIView):
+    serializer_class = AnsweredQuestionSerializer
+
+    def get_queryset(self):
+        return (
+            AnsweredQuestion.objects.filter(
+                answer_sheet_id=self.kwargs.get("ans_sheet_id"),
+                answer_sheet__test__created_by=self.request.user,
+            )
+            .prefetch_related("answered_question")
+            .order_by("id")
+        )
