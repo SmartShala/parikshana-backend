@@ -6,10 +6,17 @@ from school_app.models import SchoolStudent
 
 
 class AnsweredQuestion(models.Model):
+    answer_sheet = models.ForeignKey(
+        "AnswerSheet",
+        on_delete=models.CASCADE,
+        related_name="answered_sheet",
+        null=True,
+        blank=True,
+    )
     question = models.ForeignKey(
         Question, on_delete=models.CASCADE, related_name="answered_question"
     )
-    answer = models.CharField(max_length=1, null=True, blank=True)  # A, B, C, D
+    answer = models.SmallIntegerField(null=True, blank=True)  # A, B, C, D
     is_correct = models.BooleanField(default=False)  # True or False
 
     def __str__(self):
@@ -40,8 +47,6 @@ class StudentGrade(models.Model):
 
 
 class AnswerSheet(models.Model):
-    class statusChoices(models.TextChoices):
-        ...
 
     image = models.FileField(
         verbose_name="test image",
@@ -63,9 +68,7 @@ class AnswerSheet(models.Model):
     score = models.IntegerField(default=0, null=True, blank=True)
     failed = models.BooleanField(default=False)
     job_id = models.CharField(max_length=50, null=True, blank=True)
-    status = models.CharField(
-        max_length=20, null=True, choices=statusChoices, blank=True
-    )
+    status = models.CharField(max_length=20, null=True, blank=True)
 
     class Meta:
         db_table = "test_answer"
