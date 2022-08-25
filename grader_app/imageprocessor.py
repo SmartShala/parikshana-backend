@@ -5,23 +5,27 @@ import imutils
 from imutils import contours
 import cv2
 import requests
-
+import easyocr
 
 # ------------Class for extracting answers-----------------
 
 
 class Sheet:
     def __init__(self, img):
-        # read image as an numpy array
-        self.original = np.asarray(bytearray(img), dtype="uint8")
-        # use imdecode function
-        self.original = cv2.imdecode(self.original, cv2.IMREAD_COLOR)
+        if __name__ == ("__main__"):
+            self.original = cv2.imread(img)
+        else:
+            # read image as an numpy array
+            self.original = np.asarray(bytearray(img), dtype="uint8")
+            # use imdecode function
+            self.original = cv2.imdecode(self.original, cv2.IMREAD_COLOR)
+        self.student_id = None
         self.gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)  # Grayscale image
         blurred = cv2.GaussianBlur(self.gray, (5, 5), 0)
         edged = cv2.Canny(blurred, 75, 200)
         self.warped = self.warpImage(edged)
-
         thresh = self.threshed(self.warped, 50)
+        # self.show(thresh, "THresh")
         questionCnts = self.getBoxContours(thresh)
         self.box_contour_img = self.warped.copy()
         cv2.drawContours(self.box_contour_img, questionCnts, -1, (0, 255, 0), 2)
@@ -41,7 +45,7 @@ class Sheet:
             self.answerlist = self.getAnswers(boxmask, cnts, second, self.answerlist)
             second = not second
         self.answerlist = OrderedDict(sorted(self.answerlist.items()))
-        # cv2.waitKey(0)
+        cv2.waitKey(0)
 
     # -------------Cropping and warping image to fit the border--------
     def warpImage(self, img):
@@ -208,7 +212,6 @@ class Sheet:
             # m = cv2.cvtColor(m, cv2.COLOR_BGR2GRAY)
             # show(m, "BOX"+str(count_columns%4))
             total = cv2.countNonZero(m)
-
             if count_columns % 4 == 0:
                 count_columns = 0
                 highest = 0
@@ -218,8 +221,41 @@ class Sheet:
                 # if(ques_no-i//4==5):
                 # self.show(m, str(count_columns))
                 highest = total
-                answerlist[ques_no - i // 4] = chr(
-                    ord("D") - count_columns
-                )  # ,count_columns]
+                answerlist[ques_no - i // 4] = 4 - count_columns  # ,count_columns]
             count_columns += 1
         return answerlist
+
+    def getTextArea(self, img):
+        x = img.shape[0]
+        y = img.shape[1] 
+        img = img[0:int(0.25*x), 0:y]
+        cv2.imwrite("image_processing/test.jpeg", img)
+        #self.show(img, "WORKS?")
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        thres = cv2.threshold(img, 180, 255, cv2.THRESH_BINARY_INV)[1]
+        self.show(thres, "Thres")
+
+
+    def getText(self, img):
+        # reader = easyocr.Reader(['en'],gpu = False)
+        # sharpen_kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+        # sharpen = cv2.filter2D(img, -1, sharpen_kernel)
+        # thresh = cv2.threshold(sharpen, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+        # r_easy_ocr=reader.readtext(thresh,detail=0)
+        # return(r_easy_ocr)
+        reader = easyocr.Reader(['en'],gpu = False) # load once only in memory.
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        thresh = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY_INV)[1]
+        sharpen_kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+        sharpen = cv2.filter2D(thresh, -1, sharpen_kernel)
+        #cv2.imshow("thres", sharpen)
+        r_easy_ocr=reader.readtext(sharpen,detail=0)
+        return r_easy_ocr
+
+
+if __name__ == ("__main__"):
+    x = Sheet("image_processing/sample_sheet#6.jpeg")
+    print(x.answerlist)
+    #print(x.getText(x.original))
+    x.getTextArea(x.warped)
+    cv2.waitKey(0)
