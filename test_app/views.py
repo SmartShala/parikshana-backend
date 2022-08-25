@@ -170,3 +170,24 @@ class AddQuestions(generics.ListCreateAPIView):
         response = Question.objects.bulk_create(qs)
         serializer = QuestionSerializer(response, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class GetQuestionPaper(APIView):
+    def get_queryset(self):
+        try:
+            test = Test.objects.get(
+                id=self.kwargs["test_id"], created_by=self.request.user
+            )
+            if not test.section:
+                raise NotFound("No Section Is Set")
+        except Test.DoesNotExist:
+            raise NotFound("Test not found")
+
+        questions = Question.objects.filter(test=test)
+        if questions.exists():
+            return questions
+        else:
+            raise NotFound("No questions found")
+
+    def get(self, request, test_id, *args, **kwargs):
+        questions = self.get_queryset()

@@ -46,6 +46,7 @@ class uploadTestPaperView(generics.ListAPIView):
 
     def get_object(self):
         try:
+            print(self.kwargs["test_id"], self.request.user)
             return Test.objects.get(
                 id=self.kwargs["test_id"], created_by=self.request.user
             )
