@@ -166,7 +166,7 @@ class Sheet:
         # print(len(rectCon))
         # show(answermask, "inside_c"+str(len(c)))
         answermask = cv2.GaussianBlur(answermask, (5, 5), 0)
-        mc = cv2.findContours(answermask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)[
+        mc = cv2.findContours(answermask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[
             0
         ]
         mcf = []
