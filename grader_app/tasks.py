@@ -1,3 +1,4 @@
+import traceback
 from celery import shared_task
 from grader_app.imageprocessor import Sheet
 from grader_app.models import AnswerSheet, AnsweredQuestion
@@ -53,6 +54,7 @@ def process_images(test_id, test_ans_id, is_shuffled=False):
         test_ans_id.save()
         # End of Update Answer Sheet
     except:
+        traceback.print_exc()
         test_ans_id.status = "Failed"
         test_ans_id.failed = True
         test_ans_id.save()
