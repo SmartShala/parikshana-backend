@@ -226,7 +226,7 @@ class Sheet:
 
 
     def getContourPrecedence(self, contours, cols):
-        tolerance_factor = 24
+        tolerance_factor = 30
         origin = cv2.boundingRect(contours)
         return ((origin[1] // tolerance_factor) * tolerance_factor)*cols + origin[0]
 
@@ -263,7 +263,10 @@ class Sheet:
             text_box = cv2.bitwise_and(thres, thres, mask=mask)
             #self.show(text_box, "text"+str(i))
             text_inputs.append(self.getText(text_box))
-        self.student_id = text_inputs[2]
+        try:
+            self.student_id = text_inputs[2]
+        except:
+            pass
         return text_inputs
 
         
@@ -285,10 +288,6 @@ class Sheet:
         r_easy_ocr=reader.readtext(img, detail=0)
         return r_easy_ocr
 
-
-    def getSortedContours(self,cnts):
-
-        pass
 
 if __name__ == ("__main__"):
     x = Sheet("image_processing/sample_sheet#8.jpeg")
