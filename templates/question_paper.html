@@ -1,0 +1,74 @@
+{% load shuffle_algs %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Question Paper</title>
+    <style>
+      @page {
+        page-size: A4;
+        margin: 1.2em;
+      }
+      .grid {
+        display: grid;
+        background-color: white;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .font-lg {
+        font-size: 20pt;
+      }
+      .grid-row {
+        grid-row: 1;
+      }
+      .grid-col {
+        grid-column: 1;
+      }
+      .justify-center {
+        justify-items: center;
+      }
+    </style>
+  </head>
+  <body style="">
+    {% for student in students %}
+    <div
+      class="grid"
+      style="
+        page-break-after: always;
+        page-break-inside: avoid;
+        border: 1px solid black;
+      "
+    >
+      <div class="grid justify-center">
+        <div class="grid-row">{{student.name}}</div>
+        <div class="grid-row">{{student.std_id}}</div>
+        <div class="grid-row">{{test.id}}</div>
+      </div>
+      <div class="text-center font-lg">{{test.name}}</div>
+      <div class="grid justify-center">
+        <div class="grid-row">{{test.subject.name}}</div>
+        <div class="grid-row">Full Marks: {{test.marks}}</div>
+        <div class="grid-row">Standard : {{test.standard.name}}</div>
+      </div>
+      <div style="margin: 0px; border: 1px solid black"></div>
+      <div class="grid">
+        {% for question in test.test_question.all|shuffle:student.id %}
+        <div class="grid-col">
+          {{forloop.counter}}.&nbsp;{{question.question}}
+        </div>
+        <div class="grid-col justify-center">
+          {% for option in question.options %}
+          <div class="grid-row">
+            {{forloop.counter|to_char}}.&nbsp;{{option}}
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </body>
+</html>

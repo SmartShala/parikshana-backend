@@ -239,3 +239,8 @@ SWAGGER_SETTINGS = {
     "DOC_EXPANSION": "none",
     "OPERATIONS_SORTER": "alpha",
 }
+
+
+# Gotenberg
+GOTENBERG_API = "gotenberg:" + os.getenv("gotenberg_port")
+GOTENBERG_FORM = "/forms/chromium/convert/html"

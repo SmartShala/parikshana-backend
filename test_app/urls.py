@@ -1,5 +1,11 @@
 from django.urls import path
-from test_app.views import TestView, UpdateTestView, getTestFormData, AddQuestions
+from test_app.views import (
+    TestView,
+    UpdateTestView,
+    getTestFormData,
+    AddQuestions,
+    GetQuestionPaper,
+)
 
 
 app_name = "Test"
@@ -13,4 +19,9 @@ urlpatterns = [
     path(
         "<int:test_id>/questions/", AddQuestions.as_view(), name="Add view Questions"
     ),  # GET POST
+    path(
+        "<int:test_id>/get-question-paper/",
+        GetQuestionPaper.as_view(),
+        name="Get Question Paper",
+    ),
 ]

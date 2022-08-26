@@ -98,3 +98,10 @@ services:
     - REDIS_USERNAME=${redis_username}
     ports:
       - "6379:6379"
+
+
+  gotenberg:
+    image: gotenberg/gotenberg:latest
+    container_name: pdf_builder
+    command:
+      - "gotenberg"

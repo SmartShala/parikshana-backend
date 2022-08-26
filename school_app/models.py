@@ -2,8 +2,13 @@ from django.db import models
 from user.models import User
 from test_app.models import Subject, Standard
 from django_minio_backend import MinioBackend
+import random, string
 
 # Create your models here.
+
+
+def random_gen():
+    return "".join(random.choices(string.ascii_letters + string.digits, k=4))
 
 
 class School(models.Model):
@@ -59,7 +64,9 @@ class SchoolTeacher(models.Model):
 
 class SchoolStudent(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
-    std_id = models.CharField(max_length=100, null=True, blank=True)
+    std_id = models.CharField(
+        default=random_gen, max_length=4, unique=True, null=True, blank=True
+    )
     age = models.IntegerField(null=True, blank=True)
     sex = models.CharField(max_length=10, null=True, blank=True)
     image = models.FileField(

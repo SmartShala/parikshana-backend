@@ -20,6 +20,7 @@ class TestCreateSerializer(serializers.ModelSerializer):
             "subject",
             "creator_name",
             "updated_at",
+            "is_shuffled",
         )
 
     def create(self, validated_data):
