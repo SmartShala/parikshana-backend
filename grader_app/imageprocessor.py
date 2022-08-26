@@ -199,7 +199,7 @@ class Sheet:
         # print("length",len(mcf))
         mcf.sort(key=lambda x: self.getContourPrecedence(x, box.shape[1]))
         #mcf = contours.sort_contours(mcf,method="top-to-bottom")[0]
-        self.labelImage(self.crop, mcf)
+        #self.labelImage(self.crop, mcf)
         for i in range(len(mcf)):
             m = np.zeros(self.crop.shape[0:2], dtype="uint8")
             # print(box.shape)
