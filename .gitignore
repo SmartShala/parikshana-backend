@@ -158,3 +158,5 @@ flower/*
 node_modules/
 landing-page/
 .vscode/
+
+redis/*
