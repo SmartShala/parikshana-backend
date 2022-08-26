@@ -25,6 +25,7 @@ from school_app.models import SchoolStudent
 class StudentDetailView(generics.RetrieveAPIView):
     serializer_class = StudentSerializer
     pagination_class = None
+    permission_classes = (permissions.AllowAny,)
 
     def get_object(self):
         print(self.kwargs["std_id"])
