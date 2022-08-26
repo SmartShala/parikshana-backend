@@ -45,7 +45,7 @@ class Sheet:
             self.answerlist = self.getAnswers(boxmask, cnts, second, self.answerlist)
             second = not second
         self.answerlist = OrderedDict(sorted(self.answerlist.items()))
-        cv2.waitKey(0)
+        # cv2.waitKey(0)
 
     # -------------Cropping and warping image to fit the border--------
     def warpImage(self, img):
@@ -198,7 +198,7 @@ class Sheet:
         res = np.zeros(box.shape[0:2], dtype="uint8")
         # print("length",len(mcf))
         mcf.sort(key=lambda x: self.getContourPrecedence(x, box.shape[1]))
-        #mcf = contours.sort_contours(mcf,method="top-to-bottom")[0]
+        # mcf = contours.sort_contours(mcf,method="top-to-bottom")[0]
         self.labelImage(self.crop, mcf)
         for i in range(len(mcf)):
             m = np.zeros(self.crop.shape[0:2], dtype="uint8")
@@ -216,58 +216,54 @@ class Sheet:
                 highest = 0
             if total > highest and total > 700:
                 # print(total,"x:",mcf[i][0][0])
-                #print(ques_no - i // 4, highest, total, count_columns)
+                # print(ques_no - i // 4, highest, total, count_columns)
                 # if(ques_no-i//4==5):
                 # self.show(m, str(count_columns))
                 highest = total
-                answerlist[ques_no+1+ i // 4] = count_columns  # ,count_columns]
+                answerlist[ques_no + 1 + i // 4] = count_columns  # ,count_columns]
             count_columns += 1
         return answerlist
-
 
     def getContourPrecedence(self, contours, cols):
         tolerance_factor = 24
         origin = cv2.boundingRect(contours)
-        return ((origin[1] // tolerance_factor) * tolerance_factor)*cols + origin[0]
+        return ((origin[1] // tolerance_factor) * tolerance_factor) * cols + origin[0]
 
     def getTextArea(self, img):
         x = img.shape[0]
-        y = img.shape[1] 
-        img = img[0:int(0.25*x), 0:y]
+        y = img.shape[1]
+        img = img[0 : int(0.25 * x), 0:y]
         cv2.imwrite("image_processing/test.jpeg", img)
-        #self.show(img, "WORKS?")
-        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # self.show(img, "WORKS?")
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         thres = cv2.threshold(img, 190, 255, cv2.THRESH_BINARY_INV)[1]
-        #self.show(thres, "Thres")
+        # self.show(thres, "Thres")
         cnts = cv2.findContours(thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
-        final_c=[]
+        final_c = []
         for c in cnts:
-            (x,y,w,h) = cv2.boundingRect(c)
-            if(w>50 and h<0.1*img.shape[1]):
-                #print(h/img.shape[1])
+            (x, y, w, h) = cv2.boundingRect(c)
+            if w > 50 and h < 0.1 * img.shape[1]:
+                # print(h/img.shape[1])
                 final_c.append(c)
-                
+
         # print(len(final_c))
         # copy = img.copy()
         # cv2.drawContours(copy, final_c, -1, (0,255,0), 2)
         # self.show(copy, "contours")
-        #print(self.getText(thres))
-        #self.insertionSort(final_c)
-        
-        #final_c = contours.sort_contours(final_c, method="top-to-bottom")[0]
+        # print(self.getText(thres))
+        # self.insertionSort(final_c)
+
+        # final_c = contours.sort_contours(final_c, method="top-to-bottom")[0]
         text_inputs = []
         for i in range(len(final_c)):
-            mask = np.zeros(thres.shape, dtype='uint8')
-            cv2.drawContours(mask, final_c[i:i+1], -1, 255, -1)
+            mask = np.zeros(thres.shape, dtype="uint8")
+            cv2.drawContours(mask, final_c[i : i + 1], -1, 255, -1)
             text_box = cv2.bitwise_and(thres, thres, mask=mask)
-            #self.show(text_box, "text"+str(i))
+            # self.show(text_box, "text"+str(i))
             text_inputs.append(self.getText(text_box))
         self.student_id = text_inputs[2]
         return text_inputs
-
-        
-
 
     def getText(self, img):
         # reader = easyocr.Reader(['en'],gpu = False)
@@ -276,25 +272,25 @@ class Sheet:
         # thresh = cv2.threshold(sharpen, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
         # r_easy_ocr=reader.readtext(thresh,detail=0)
         # return(r_easy_ocr)
-        reader = easyocr.Reader(['en'],gpu = False) # load once only in memory.
-        #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        #thresh = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY_INV)[1]
-        sharpen_kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+        reader = easyocr.Reader(["en"], gpu=False)  # load once only in memory.
+        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # thresh = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY_INV)[1]
+        sharpen_kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
         sharpen = cv2.filter2D(img, -1, sharpen_kernel)
-        #cv2.imshow("thres", sharpen)
-        r_easy_ocr=reader.readtext(img, detail=0)
+        # cv2.imshow("thres", sharpen)
+        r_easy_ocr = reader.readtext(img, detail=0)
         return r_easy_ocr
 
-
-    def getSortedContours(self,cnts):
+    def getSortedContours(self, cnts):
 
         pass
 
+
 if __name__ == ("__main__"):
     x = Sheet("image_processing/sample_sheet#8.jpeg")
-    #x = cv2.cvtColor()
-    #print(x.answerlist)
-    #print(x.getText(x.original))
+    # x = cv2.cvtColor()
+    # print(x.answerlist)
+    # print(x.getText(x.original))
     print(x.answerlist)
     print(x.text_boxes)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
