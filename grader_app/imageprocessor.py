@@ -172,9 +172,7 @@ class Sheet:
         # print(len(rectCon))
         # show(answermask, "inside_c"+str(len(c)))
         answermask = cv2.GaussianBlur(answermask, (5, 5), 0)
-        mc = cv2.findContours(answermask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)[
-            0
-        ]
+        mc = cv2.findContours(answermask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
         mcf = []
         for i in mc:
             (x, y, w, h) = cv2.boundingRect(i)
@@ -194,13 +192,14 @@ class Sheet:
     def getAnswers(self, box, mcf, flag, answerlist):
         count_columns = 0
         highest = 0
-        ques_no = 30
+        ques_no = 15
         if flag:
-            ques_no = 15
+            ques_no = 0
         res = np.zeros(box.shape[0:2], dtype="uint8")
         # print("length",len(mcf))
-        mcf = contours.sort_contours(mcf,method="top-to-bottom")[0]
-        #self.labelImage(self.crop, mcf)
+        mcf.sort(key=lambda x: self.getContourPrecedence(x, box.shape[1]))
+        #mcf = contours.sort_contours(mcf,method="top-to-bottom")[0]
+        self.labelImage(self.crop, mcf)
         for i in range(len(mcf)):
             m = np.zeros(self.crop.shape[0:2], dtype="uint8")
             # print(box.shape)
@@ -221,23 +220,15 @@ class Sheet:
                 # if(ques_no-i//4==5):
                 # self.show(m, str(count_columns))
                 highest = total
-                answerlist[ques_no - i // 4] = 3 - count_columns  # ,count_columns]
+                answerlist[ques_no+1+ i // 4] = count_columns  # ,count_columns]
             count_columns += 1
         return answerlist
 
-    def insertionSort(self, cnts):
-        for i in range(1, len(cnts)):
-            key = cnts[i:i+1]
-            j = i-1
-            key_box = cv2.boundingRect(key)
-            j_box = cv2.boundingRect(cnts[j:j+1])
-            while j >=0 and (abs(key_box[1]-j_box[1])>50 and key_box[1]<j_box[1]) or (abs(key_box[1]-j_box[1]<50 and key_box[0]<j_box[0])):
-                    cnts[j+1] = cnts[j]
-                    j -= 1
-                    j_box = cv2.boundingRect(cnts[j:j+1])
 
-            cnts[j+1] = key
-            key_box = cv2.boundingRect(key)
+    def getContourPrecedence(self, contours, cols):
+        tolerance_factor = 24
+        origin = cv2.boundingRect(contours)
+        return ((origin[1] // tolerance_factor) * tolerance_factor)*cols + origin[0]
 
     def getTextArea(self, img):
         x = img.shape[0]
@@ -248,7 +239,8 @@ class Sheet:
         #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         thres = cv2.threshold(img, 190, 255, cv2.THRESH_BINARY_INV)[1]
         #self.show(thres, "Thres")
-        cnts = cv2.findContours(thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        cnts = cv2.findContours(thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = imutils.grab_contours(cnts)
         final_c=[]
         for c in cnts:
             (x,y,w,h) = cv2.boundingRect(c)
@@ -261,9 +253,9 @@ class Sheet:
         # cv2.drawContours(copy, final_c, -1, (0,255,0), 2)
         # self.show(copy, "contours")
         #print(self.getText(thres))
-        # self.insertionSort(final_c)
-
-        final_c = contours.sort_contours(final_c, method="top-to-bottom")[0]
+        #self.insertionSort(final_c)
+        
+        #final_c = contours.sort_contours(final_c, method="top-to-bottom")[0]
         text_inputs = []
         for i in range(len(final_c)):
             mask = np.zeros(thres.shape, dtype='uint8')
@@ -271,7 +263,7 @@ class Sheet:
             text_box = cv2.bitwise_and(thres, thres, mask=mask)
             #self.show(text_box, "text"+str(i))
             text_inputs.append(self.getText(text_box))
-        self.student_id = text_inputs[1]
+        self.student_id = text_inputs[2]
         return text_inputs
 
         
