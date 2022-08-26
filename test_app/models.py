@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import User
 from django.contrib.postgres.fields import ArrayField
+from django_minio_backend import MinioBackend
 
 
 class Board(models.Model):
@@ -65,7 +66,13 @@ from school_app.models import SchoolSection
 
 class Test(models.Model):
     name = models.CharField(max_length=120, null=True, blank=True)
-    topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.CASCADE)
+    topic = models.ForeignKey(
+        Topic,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="test_topic",
+    )
 
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -89,6 +96,13 @@ class Test(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     pending = models.BooleanField(default=True)
     is_shuffled = models.BooleanField(default=False)
+    test_question_pdf = models.FileField(
+        verbose_name="test papers",
+        storage=MinioBackend(bucket_name="parikshana-media"),
+        upload_to="test_papers",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.name

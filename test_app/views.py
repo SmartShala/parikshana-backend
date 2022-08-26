@@ -1,6 +1,10 @@
 from typing import List
 from urllib import response
+import io
+from django.conf import settings
 from django.db.models import Count, Sum, F
+from django.template.loader import render_to_string
+from django.core.files.base import ContentFile
 
 from rest_framework.views import APIView
 from rest_framework import generics, permissions, status
@@ -11,7 +15,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from parikshana.custom_paginator import CustomPagination
 from parikshana.custom_perms import IsAdminUser
 
-from school_app.models import SchoolSection, SchoolTeacher
+from school_app.models import SchoolSection, SchoolStudent, SchoolTeacher
 from test_app.serializers import (
     TestSerializer,
     TestCreateSerializer,
@@ -21,6 +25,7 @@ from test_app.models import Question, Test, Topic, Standard, Subject
 from django_filters import rest_framework as filters
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import requests
 
 
 class TestView(generics.ListCreateAPIView):
@@ -173,21 +178,42 @@ class AddQuestions(generics.ListCreateAPIView):
 
 
 class GetQuestionPaper(APIView):
-    def get_queryset(self):
+    def get(self, request, test_id, *args, **kwargs):
         try:
-            test = Test.objects.get(
-                id=self.kwargs["test_id"], created_by=self.request.user
+            test = Test.objects.filter(
+                id=self.kwargs.get("test_id"),
+                created_by=self.request.user,
             )
-            if not test.section:
-                raise NotFound("No Section Is Set")
+            if not test.first().section:
+                raise NotFound("No Sections Assigned!")
+            test = (
+                test.select_related("section", "topic__subject", "topic__standard")
+                .prefetch_related(
+                    "section__students",
+                    "test_question",
+                )
+                .annotate(
+                    marks=Sum("test_question__marks"),
+                )
+            )
         except Test.DoesNotExist:
             raise NotFound("Test not found")
-
-        questions = Question.objects.filter(test=test)
-        if questions.exists():
-            return questions
+        test = test.first()
+        students: SchoolStudent = test.section.students.all()
+        render = render_to_string(
+            "question_paper.html", {"test": test, "students": students}
+        )
+        session = requests.Session()
+        session.trust_env = False
+        resp = session.post(
+            "http://" + settings.GOTENBERG_API + settings.GOTENBERG_FORM,
+            files={"index.html": io.StringIO(render)},
+        )
+        if resp.status_code == 200:
+            test.test_question_pdf.save("test.pdf", ContentFile(resp.content))
+            test.save()
         else:
-            raise NotFound("No questions found")
-
-    def get(self, request, test_id, *args, **kwargs):
-        questions = self.get_queryset()
+            print(resp.content)
+        return Response(
+            {"Image link": test.test_question_pdf.url}, status=status.HTTP_200_OK
+        )

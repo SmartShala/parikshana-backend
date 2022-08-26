@@ -100,5 +100,8 @@ services:
       - "6379:6379"
 
 
-  pdf:
-    container_name: 
+  gotenberg:
+    image: gotenberg/gotenberg:latest
+    container_name: pdf_builder
+    command:
+      - "gotenberg"
