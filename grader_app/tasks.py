@@ -42,7 +42,7 @@ def process_images(test_id, test_ans_id, is_shuffled=False):
             _temp_ans_q = AnsweredQuestion(
                 answer_sheet_id=test_ans_id,
                 question=question,
-                is_correct=question.correct_option == (ord(v) - 65),
+                is_correct=question.correct_option == int(v),
             )
             final_qs_list.append(_temp_ans_q)
             final_score += question.marks if _temp_ans_q else 0

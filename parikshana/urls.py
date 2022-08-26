@@ -44,6 +44,7 @@ urlpatterns = [
     path("school/", include("school_app.urls", namespace="School")),
     path("test/", include("test_app.urls", namespace="Test")),
     path("grader/", include("grader_app.urls", namespace="Grader")),
+    path("student/", include("student_app.urls", namespace="Student")),
 ]
 
 
