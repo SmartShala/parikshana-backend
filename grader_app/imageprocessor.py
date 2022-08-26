@@ -84,7 +84,8 @@ class Sheet:
 
     # ---------Shows image on screen-----------
     def show(self, img, x=""):
-        cv2.imshow(x, self.resized(img))
+        pass
+        #cv2.imshow(x, self.resized(img))
 
     # ---------Returns image after thresholding-------------
     def threshed(self, img, val):
@@ -186,7 +187,7 @@ class Sheet:
         cm = img.copy()
         for (i, c) in enumerate(mcf):
             cm = contours.label_contour(cm, c, i)
-        self.show(cm, "CMMM")
+        #self.show(cm, "CMMM")
 
     # ----------Retrieves final list of answers------------------
     def getAnswers(self, box, mcf, flag, answerlist):
@@ -262,7 +263,10 @@ class Sheet:
             text_box = cv2.bitwise_and(thres, thres, mask=mask)
             # self.show(text_box, "text"+str(i))
             text_inputs.append(self.getText(text_box))
-        self.student_id = text_inputs[2]
+        try:
+            self.student_id = text_inputs[2]
+        except:
+            pass
         return text_inputs
 
     def getText(self, img):

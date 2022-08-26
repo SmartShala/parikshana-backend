@@ -17,16 +17,17 @@ def process_images(test_id, test_ans_id, is_shuffled=False):
         test_ans_id.status = "Processing"
         test_ans_id.save()
         # Gets Marked List Details
-        marked_list = Sheet(test_ans_id.image.file.read()).answerlist
+        sheet = Sheet(test_ans_id.image.file.read())
+        marked_list = sheet.answerlist
 
         # Shuffling Function for Marked List
-        if not Sheet.student_id or not test_ans_id.student:
+        if not sheet.student_id or not test_ans_id.student:
             test_ans_id.status = "Set Student ID"
             test_ans_id.failed = True
             test_ans_id.save()
             return
         elif test_ans_id.student:
-            Sheet.student_id = test_ans_id.student.id
+            sheet.student_id = test_ans_id.student.id
 
         test_ans_id.image.file.close()
         questions = Question.objects.filter(test_id=test_id).order_by("created_at")
